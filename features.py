@@ -48,9 +48,7 @@ def train_model(examples, fo=0):
 	feature_options = {0: co_occurence_window}
 
 	# parse examples and update dictionaries 
-	# for example in examples: 
-	for i in range(1):
-		example = examples[i]
+	for example in examples: 
 
 		features = feature_options[fo](example.prev_context, example.next_context, 4) 
 
@@ -60,7 +58,6 @@ def train_model(examples, fo=0):
 		else: 
 			word_appearances[example.word] = 1 
 			sense_appearances[example.word] = {} 
-			feature_appearances[(example.word, example.sense_id)] = {} 
 
 		# update the count of sense appearances 
 		if example.sense_id in sense_appearances[example.word].keys():
@@ -68,16 +65,15 @@ def train_model(examples, fo=0):
 		else: 
 			sense_appearances[example.word][example.sense_id] = 1
 
-		# update the feature counts - for specific senses 
+		# update the feature counts for specific senses 
 		for f in features: 
+			if (example.word, example.sense_id) not in feature_appearances: 
+				feature_appearances[(example.word, example.sense_id)] = {} 		
 			if f in feature_appearances[(example.word, example.sense_id)].keys():
 				feature_appearances[(example.word, example.sense_id)][f] += 1
 			else: 
 				feature_appearances[(example.word, example.sense_id)][f] = 1 
 
-	# print word_appearances
-	# print sense_appearances
-	# print feature_appearances
 	return word_appearances, sense_appearances, feature_appearances
 
 
