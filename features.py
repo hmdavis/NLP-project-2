@@ -78,7 +78,7 @@ def train_model(examples, fo=0):
 
 
 def predict(example, words, senses, features): 
-	''' Predict the sense of a given example. ''' 
+	''' Predict the sense of a given example. '''
 	probabilities = {} 
 	total_occurances = words[example.word]
 
