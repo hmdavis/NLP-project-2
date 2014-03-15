@@ -5,8 +5,8 @@ from data_parser import parse_data_file
 
 # if you want to use weighting and it just zeros out, remove zeros and roll with it 
 # http://stackoverflow.com/questions/11911469/tfidf-for-search-queries
-def co_occurence_window(prev, next, n=4): 
-	''' Build feature of set of tokens within some n token distance of target ''' 
+def co_occurence_window(prev, next, n=10): 
+	""" Build feature of set of tokens within some n token distance of target """
 	prev = nltk.word_tokenize(prev) 
 	next = nltk.word_tokenize(next) 
 	# TODO: use tdif weighting to only use important words! 
@@ -28,24 +28,21 @@ def pos_tags(prev, next, n=4):
 
 
 def train_model(examples, fo=0):
-	'''
+	"""
 	Train supervised WSD model with given training data. 
 
 		examples: text of training file containing examples
 		fo: option to select what feature vector you want to use 
 
-	'''
+	"""
 	word_appearances = {} 
-	sense_appearances = {} 
+	sense_appearances = {}
 	feature_appearances = {} 
-	# feature_options = {0: co_occurence_window, 
-	# 					1: co_location_window, 
-	# 					2: ngrams, 
-	# 					3: pos_tags
-	# }
-
-	# just for testing 
-	feature_options = {0: co_occurence_window}
+	feature_options = {0: co_occurence_window, 
+						1: co_location_window, 
+						2: ngrams, 
+						3: pos_tags
+	}
 
 	# parse examples and update dictionaries 
 	for example in examples: 
@@ -77,30 +74,54 @@ def train_model(examples, fo=0):
 	return word_appearances, sense_appearances, feature_appearances
 
 
-def predict(example, words, senses, features): 
-	''' Predict the sense of a given example. '''
+def predict(example, words, senses, features, fo=0): 
+	""" Predict the sense of a given example. """
+	
+	feature_options = {0: co_occurence_window, 
+						1: co_location_window, 
+						2: ngrams, 
+						3: pos_tags
+	}
+
 	probabilities = {} 
 	total_occurances = words[example.word]
+	local_feats = feature_options[fo](example.prev_context, example.next_context, 4) 
 
 	# go through all the senses 
 	for sense, sense_occurances in senses[example.word].iteritems(): 
 		prob = float(sense_occurances) / total_occurances # P(s_i)
 
-		for f, feat_occurances in features[(example.word, sense)].iteritems(): 
-			prob_feat_given_sense = float(feat_occurances) / sense_occurances # P(f_i | s_i)
-			prob *= prob_feat_given_sense
+		for f in local_feats: 
+			# handle unseen features? 
+			if f in features[(example.word, sense)]: 
+				feat_occurances = features[(example.word, sense)][f]
+				prob_feat_given_sense = float(feat_occurances) / sense_occurances # P(f_i | s_i)
+				prob *= prob_feat_given_sense
 
-		probabilities[sense] = prob 
+		probabilities[sense] = prob
 
-	# pretty sure this returns the key with the maximum value 
+	# print probabilities 
 	prediction = max(probabilities.iterkeys(), key =lambda k: probabilities[k])
 
 	return prediction
 
 
-# just make sure it runs nicely 
-test_exs = parse_data_file('test_data.data')
+def test_model(examples, words, senses, features): 
+	""" Predict each test example and return accuracy. """
+	num_correct = 0 
+	total = len(examples) 
+	for example in examples:
+		prediction = predict(example, words, senses, features)
+		num_correct += int(prediction == example.sense_id)
+		print example.word, "- Sense:", example.sense_id, " | Prediction:", prediction
+	print "Accuracy: ", float(num_correct) / total
+
+
+# test model 
 train_exs = parse_data_file('training_data.data')
+test_exs = parse_data_file('test_data.data')
+validation_exs = parse_data_file('validation_data.data')
 words, senses, features = train_model(train_exs, fo=0)
-predict(train_exs[0], words, senses, features)
+test_model(validation_exs, words, senses, features)
+# test_model(train_exs, words, senses, features)
 
