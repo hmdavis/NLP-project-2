@@ -93,6 +93,17 @@ def smooth_model(words, senses, features):
 			features[(word,sense)]['unk'] = total * 0.75 
 
 
+def predict_bassline(example, words, senses, features, fo=0): 
+	""" Predict most frequent sense. """ 
+	best_sense = -10
+	best_sense_value = -10
+	for sense, sense_occurances in senses[example.word].iteritems():
+		if sense_occurances > best_sense_value: 
+			best_sense = sense
+			best_sense_value = sense_occurances
+	return best_sense, best_sense_value
+
+
 def predict(example, words, senses, features, fo=0): 
 	""" Predict the sense of a given example. """
 	feature_options = {0: co_occurance_window, 
@@ -180,6 +191,7 @@ def test_model(examples, words, senses, features):
 	for example in examples:
 		example_num += 1
 		prediction, confidence = predict(example, words, senses, features, 0)
+		# prediction, confidence = predict_bassline(example, words, senses, features, 0)
 
 		if confidence == -1: 
 			# test example wasn't found in trained model 
@@ -194,9 +206,8 @@ def test_model(examples, words, senses, features):
 			# regular accuracy 
 			num_correct += float(prediction == example.sense_id)
 	
-	# print "Accuracy:", float(num_correct) / total
-	# print "Soft-Score:", soft_score
-	return float(num_correct) / total
+	accuracy = float(num_correct) / total
+	return accuracy, soft_score / total 
 
 
 # test model 
@@ -204,13 +215,14 @@ train_exs = parse_data_file('training_data.data')
 test_exs = parse_data_file('test_data.data')
 validation_exs = parse_data_file('validation_data.data')
 
-# n_values = [1, 5, 10, 100, 1000, 10000, 100000]    # use this for ext3 
-n_values = [1000000]								 # use this for everything else 
-print "n, accuracy"
-for n in n_values: 
-	shuffle(train_exs) # only important for ext3 
-	words, senses, features = train_model(train_exs[:n], fo=0)
-	accuracy = test_model(validation_exs, words, senses, features)
-	# accuracy = test_model(test_exs, words, senses, features)
-	print str(n) + "," + str(accuracy)
+for i in range(1): 
+	# n_values = [1, 5, 10, 100, 1000, 10000, 100000]    # use this for ext3 
+	n_values = [1000000]								 # use this for everything else 
+	print "n, accuracy, soft"
+	for n in n_values: 
+		shuffle(train_exs) # only important for ext3 
+		words, senses, features = train_model(train_exs[:n], fo=0)
+		accuracy, soft_score = test_model(validation_exs, words, senses, features)
+		# accuracy = test_model(test_exs, words, senses, features)
+		print str(n) + "," + str(accuracy) + "," + str(soft_score)
 
