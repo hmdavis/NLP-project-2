@@ -1,0 +1,38 @@
+# changing size of feature window 
+n	valid. accuracy	kaggle accuracy
+10	0.83065380493	
+9 	0.829581993569	
+8 	0.822079314041	
+7	0.828510182208	
+6	0.83065380493	
+5	0.838156484459	
+4	0.845659163987	
+3	0.856377277599	
+2	0.861736334405
+
+# extention 2
+for n = 4: 
+soft-scoring: 	3.69103039661e-06
+accuracy: 		0.836012861736
+
+# using co-location
+n	valid. accuracy
+5	0.813504823151
+4	0.824222936763
+3	0.834941050375
+2	0.822079314041
+
+# using both co-occurance and co-location 
+n	valid. accuracy 
+5	0.819935691318
+4	0.826366559486
+3	0.834941050375
+2	0.834941050375
+
+# using the prediction change algo
+n	num. changed predictions	valid. accuracy
+10	11							0.836012861736
+5	13							0.83922829582
+4	5							0.836012861736
+3	7							0.848874598071
+2	10							0.854233654877
