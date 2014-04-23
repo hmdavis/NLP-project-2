@@ -1,0 +1,49 @@
+electronics_neg_13
+neu	Pros: I loved the way it worked when it worked Cons: I am not a quiter; they will remember me for a long time; Can't count on the warranty; they were no help when i contacted them; i still have 1 month on my warranty; I am going to keep trying untill xmas Lexmark You can't trust them!
+neu	I bought a Lexmark All in one x2470 with a gift card i got for Christmas last year.
+neg	It quit working just two days ago, so i called Lexmark support and they had me clean the rollers, but this did'nt work.
+neg	so i went on-line to check on my warranty and that is all i could seem to do.
+neg	Could not find any where to put in a claim.
+neg	I am very upset, but i am not a quitter but a surviver ! I am going to keep on trying, they will definitely remember my name before i am through.
+neu	I will let you know the out come if that is allowed.
+neu	Grannyshine
+
+electronics_pos_84
+pos	Simple to set up and use.
+neu	Works reasonably well in a noisy car.
+neu	Ocassionaly disconnects and then reconnects.
+neu	Not sure its worth as much as it costs, so only 4 stars.
+pos	FM function allows you to play music on your phone through your car stereo.
+pos	Nice touch.
+pos	Connected to radio first time with no problems.
+neu	Same as using an Ipod with fm transmitter.
+
+videogames_pos_12
+pos	Without a doubt the most well designed game I have yet played.
+pos	It is NOT a sequel to Starcraft, and it is NOT an AoE rip-off either.
+pos	It is the most original RTS game out there, as it adds in a role playing flavor with the advent of Heroes, special characters each of the races have.
+pos	Many people claim that the heroes are unbalanced because they are so much better than normal characters, but that is a stupid statement.
+pos	They are very powerful, but everyone has 3 of them, and they balance each other, being the same costs/availability.
+pos	They each have their roles, and the ways they interact with their allies and opponents is a large part of the game.
+pos	All in all I think the game is a sophisticated chess match, and like chess takes many hours to master, so don't buy this game if you are short on time.
+pos	The game play is incredible for two reasons.
+pos	The first is the Artificial Intelligence, which is amazing.
+neg	Not so much as your computer opponents AI when you play the single player games, that AI is weak.
+pos	But the AI that controls your troops in battle, responds to your commands, etc. is probably the best I have ever seen.
+pos	The ability to put spells on auto-cast (and the effectiveness of the AI at deploying them) is amazing.
+pos	The way troops react is so realistic it is unparalleled.
+neu	You really spend most of your micro-management on the heroes (you usually have 2 at a time, which makes the game just micro-intensive enough to be hard, but not so much as too make it frustrating.
+neu	It seems like other games have either little micro needed or too much, but this game finds a happy median.
+pos	The second thing that sets this game apart is the 4 races.
+neu	Some people complain that other games have more.
+neu	But in those other games, they are usually all too similar, they are just the same groups and have mostly the same stuff, but some of their stuff is stronger than other factions and some weaker (maybe their air attack is strong but their troops weak).
+neu	This usually makes only one or two factions dominant, as one aspect tends to be overpowering.
+pos	No such thing in WarCraft 3. Granted, each faction has similarities.
+pos	But the differences are much greater, and so well balanced that you see each faction represented among top players almost equally.
+pos	Any race can truly beat any race.
+pos	The graphics are sweet.
+pos	Even on medium, which I have them on, they look excellent.
+neu	The simple fact of RTS games is that graphics aren't that important anyway.
+neu	True, you like to be able to distinguish your units, but for the most part it's kind of like chess, who cares what they look like; you only care what they do.
+pos	But don't get me wrong, the graphics on this game are incredible, I've ran them with a GeForce4 TI 4200 128 mb on high everything it was very impressive.
+neu	It just isn't a big deal to me in an RTS.
