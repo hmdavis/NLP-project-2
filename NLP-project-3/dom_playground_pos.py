@@ -4,8 +4,10 @@ from nltk.corpus import stopwords
 from nltk.tag.hmm import HiddenMarkovModelTrainer
 from nltk.tag.crf import MalletCRF
 from nltk.stem.lancaster import LancasterStemmer
+from sklearn.cluster import KMeans
+from sklearn import svm
 
-word_only_tokenizer = nltk.tokenize.RegexpTokenizer(r"\w[\w\'-]*\w?")
+word_only_tokenizer = nltk.tokenize.RegexpTokenizer(r"\w[\w\'-]*\w?|\?|\$")
 def parse_words_only(s):
 	"""
 	Returns a list of words with no punctuation.
@@ -30,7 +32,7 @@ def preprocess(sentence):
 	converts a sentence into a list of lowercse, lemmatized words
 	"""
 	# st = LancasterStemmer()
-	ret = [lemmatize(w.lower()) for w in parse_words_only(sentence)]
+	ret = [w.lower() for w in parse_words_only(sentence)]
 	return ret
 
 review_list = parse_review_file("training_data.txt")
@@ -89,32 +91,67 @@ def getwordfeatures(listoftweets):
 #Calls above functions - gives us list of the words in the tweets, ordered by freq.
 # print getwordfeatures(getwords(tweets))
 
+docs = [i for (i,j) in tweets]
 wordlist = set(getwords(tweets))
 wordlist = set([i for i in wordlist if not i in stopwords.words('english')])
+wordlist = set([i for i in wordlist if sum(i in j for j in docs) > 2])
+print len(wordlist)
+num_words = len(wordlist)
 ind_to_word = list(wordlist)
-word_to_ind = dict((j, i) for (i, j) in enumerate(ind_to_word))
-num_words = len(ind_to_word)
-
 print "wordlist"
+
+def normalize(v):
+	l = sum(i * i for i in v)
+	if l == 0: return v
+	r = tuple(i / float(l) for i in v)
+	return r
 
 def feature_extractor(doc):
 	docwords = set(doc)
-	vector = {i : (ind_to_word[i] in docwords) for i in xrange(num_words)}
+	# vector = {i : (ind_to_word[i] in docwords) for i in xrange(num_words)}
+	# return vector
+	# docwords = set(doc)
+	vector = tuple(float(ind_to_word[i] in docwords) for i in xrange(num_words))
 	return vector
- 
-#Creates a training set - classifier learns distribution of true/falses in the input.
-training_set = nltk.classify.apply_features(feature_extractor, tweets)
-print "training set"
-classifier = nltk.NaiveBayesClassifier.train(training_set)
-print "classifier"
+
+# #Creates a training set - classifier learns distribution of true/falses in the input.
+# training_set = nltk.classify.apply_features(feature_extractor, tweets)
+# print "training set"
+# classifier = nltk.NaiveBayesClassifier.train(training_set)
+# print "classifier"
 
 # print classifier.most_informative_features()
 
+km = KMeans(n_clusters = 12)
+train_feats = map(feature_extractor, docs)
+print "training features"
+km.fit(train_feats)
+print "km fit"
+
+sent_map = {"pos" : 1, "neu" : 0, "neg" : -1}
+map_sent = dict((j,i) for (i,j) in sent_map.items())
+
+# X = []
+# y = []
+# for (sentence, sentiment) in tweets:
+# 	feature = feature_extractor(sentence)
+# 	X.append(feature)
+# 	y.append(sent_map[sentiment])
+
+# print "features"
+
+# clf = svm.LinearSVC()
+# clf.fit(X, y)
+
+# print "svm"
+
 def classify(sentence):
 	feature = feature_extractor(preprocess(sentence.text))
-	# probdist = classifier.prob_classify(feature)
-	# return tuple(int(j) for (i,j) in sorted(probdist._prob_dict.items
-	return classifier.classify(feature)
+	# # probdist = classifier.prob_classify(feature)
+	# # return tuple(int(j) for (i,j) in sorted(probdist._prob_dict.items
+	# return classifier.classify(feature)
+	return km.predict(feature)[0]
+	# return clf.predict(feature)[0]
 	
 def label_review(review):
 	labelled_sequence = []
@@ -126,14 +163,6 @@ def label_review(review):
 
 
 labelled_sequences = map(label_review, training_reviews)
-
-def _estimator(fdist, bins):
-    """
-    Default estimator function using a SimpleGoodTuringProbDist.
-    """
-    # can't be an instance method of NgramModel as they
-    # can't be pickled either.
-    return nltk.LidstoneProbDist(fdist, bins)
 
 trainer = HiddenMarkovModelTrainer()
 hmm = trainer.train_supervised(labelled_sequences)
@@ -148,14 +177,12 @@ for review in validation_reviews:
 	guess_bayes = map(classify, review)
 
 	print "actual"
-	print actual
-	print ""
+	print [sent_map[a] for a in actual]
 	print "bayes"
 	print guess_bayes
-	print ""
 	guess_hmm = hmm.best_path(guess_bayes)
 	print "hmm"
-	print guess_hmm
+	print [sent_map[a] for a in guess_hmm]
 
 	for i in range(len(review)):
 		total += 1
@@ -170,19 +197,19 @@ prec_bayes = 100.0 * (float(correct_bayes) / total)
 prec_hmm = 100.0 * (float(correct_hmm) / total)
 print "bayes: %d, hmm: %d" % (prec_bayes, prec_hmm)
 
-# test_reviews = parse_review_file("test_data_no_true_labels.txt")
-# print "Id,Answer"
-# id = -1
-# m = {"pos" : 1, "neu" : 0, "neg" : -1}
-# for review in test_reviews:
-# 	# print "========================"
-# 	# print review.header.strip()
-# 	actual = [s.sentiment for s in review]
-# 	guess_bayes = map(classify, review)
-# 	# guess_hmm = hmm.best_path(guess_bayes)
+# # test_reviews = parse_review_file("test_data_no_true_labels.txt")
+# # print "Id,Answer"
+# # id = -1
+# # m = {"pos" : 1, "neu" : 0, "neg" : -1}
+# # for review in test_reviews:
+# # 	# print "========================"
+# # 	# print review.header.strip()
+# # 	actual = [s.sentiment for s in review]
+# # 	guess_bayes = map(classify, review)
+# # 	# guess_hmm = hmm.best_path(guess_bayes)
 
-# 	for h in guess_bayes:
-# 		id += 1
-# 		print "%d, %d" % (id, m[h])
+# # 	for h in guess_bayes:
+# # 		id += 1
+# # 		print "%d, %d" % (id, m[h])
 
 

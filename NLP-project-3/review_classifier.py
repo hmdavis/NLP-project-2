@@ -43,6 +43,7 @@ def classify(sentence):
         if word in clue_dict:
             clues = clue_dict[word]
             clue = clues[0]
+            
     
 def label_review(review):
     labelled_sequence = []

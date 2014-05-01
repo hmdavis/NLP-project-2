@@ -20,16 +20,19 @@ class Review():
 
 	def __iter__(self):
 		return iter(self.sentences)
+	def __len__(self):
+		return len(self.sentences)
 
 	def __getitem__(self, index):
 		return self.sentences[index]
+
 
 def parse_review_file(filename = "training_data.txt"):
 	reviews = []
 	curr_review = None
 	with open(filename, "r") as f:
 		for line in f:
-			if curr_review:
+			if curr_review is not None:
 				if line == '\n':
 					reviews.append(curr_review)
 					curr_review = None
@@ -38,7 +41,7 @@ def parse_review_file(filename = "training_data.txt"):
 			else:
 				if line != '\n':
 					curr_review = Review(line)
-		if curr_review:
+		if curr_review is not None:
 			reviews.append(curr_review)
 	return reviews
 
